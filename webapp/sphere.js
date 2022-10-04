@@ -126,7 +126,8 @@ let assign_pos = function(){
 window.addEventListener('load',function(){
   var svg = d3.select("svg");
 
-  setup_graph_select();
+  //setup_graph_select();
+  assign_pos();
 
   var projection = d3.geoOrthographic(),
       path = d3.geoPath().projection(projection)
