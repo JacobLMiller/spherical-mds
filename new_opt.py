@@ -101,22 +101,36 @@ def main():
     d = apsp(G)
     max_dist = d.max()
     md = np.where(d == d.max())
-    K = {vi for m in md for vi in m }
+    K = {(md[0][i],md[1][i]) for i,_ in enumerate(md[0])}
 
-    K = random.sample(tuple(K),k=min(8,len(K)))
+    K = random.sample(tuple(K),k=min(5,len(K)))
+    K = {v for verts in K for v in verts}
     print(K)
 
 
     Pairs = list()
     stdist = math.pi/max_dist
 
+    bal = np.where(np.logical_or(d == 2 ,d == 3))
+    B = {(bal[0][i],bal[1][i]) for i,_ in enumerate(bal[0])}
 
-    for k in K:
-        dist = gt.shortest_distance(G,k)
-        for i,dik in enumerate(dist):
-            if i != k: Pairs.append(Pair(i,k,stdist*dik))
-    for u,v in G.iter_edges():
-        Pairs.append(Pair(u,v,stdist))
+    #B = random.sample(tuple(B),k=min(len(B), int(G.num_vertices()/10)))
+
+    # for u,v in B:
+    #     dist = d[u,v]
+    #     Pairs.append(Pair(u,v,stdist*dist))
+
+
+    # for k in K:
+    #     dist = gt.shortest_distance(G,k)
+    #     for i,dik in enumerate(dist):
+    #         if i != k: Pairs.append(Pair(i,k,stdist*dik))
+    # for u,v in G.iter_edges():
+    #     Pairs.append(Pair(u,v,stdist))
+
+    for u in G.iter_vertices():
+        for v in range(u):
+            if u != v: Pairs.append(Pair(u,v,stdist*d[u,v]))
 
 
     ecc = [max(v) for v in d]
@@ -135,9 +149,9 @@ def main():
     X = sgd_sphere(Pairs,G.num_vertices(),steps)
 
     write_to_json(G,X)
-    # pos = G.new_vp('vector<float>')
-    # pos.set_2d_array(X.T)
-    # gt.graph_draw(G,pos=pos)
+    # # pos = G.new_vp('vector<float>')
+    # # pos.set_2d_array(X.T)
+    # # gt.graph_draw(G,pos=pos)
 
         
 
